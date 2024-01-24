@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F5F5F5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .game {
+            text-align: center;
+        }
+        .cell {
+            height: 120px;
+            width: 120px;
+            border: 3px solid #333;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 120px;
+            cursor: pointer;
+            background-color: #FFF;
+            color: #333;
+            font-size: 2em;
+        }
+        .X {
+            color: #F00;
+        }
+        .O {
+            color: #00F;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            color: #FFF;
+            background-color: #333;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        #message {
+            font-size: 20px;
+            color: #333;
+        }
+        #winMessage {
+            font-size: 30px;
+            color: #F00;
+        }
+        #timer {
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="game">
+        <h1>TIC TAC TOE</h1>
+        <div id="menu">
+            <button onclick="startGame('versus')">Versus Mode</button>
+            <button onclick="startGame('solo', 'easy')">Solo Easy</button>
+            <button onclick="startGame('solo', 'medium')">Solo Medium</button>
+            <button onclick="startGame('solo', 'hard')">Solo Hard</button>
+        </div>
+        <p id="timer" style="display: none;"></p>
+        <table id="board" style="display: none;"></table>
+        <div id="controls" style="display: none;">
+            <button id="reset" onclick="resetBoard()">Reset</button>
+            <button onclick="resetScore()">Reset Score</button>
+            <button onclick="showMenu()">Back to Main Menu</button>
+        </div>
+        <p id="score"></p>
+        <p id="message"></p>
+        <p id="winMessage"></p>
+    </div>
+
+    <script>
+        var board = ['','','','','','','','',''];
+        var player = 'X';
+        var mode = 'versus';
+        var difficulty = 'easy';
+        var score = { 'X': 0, 'O': 0, 'tie': 0 };
+        var timer;
+
+        function drawBoard() {
+            var cells = '';
+            for (var i = 0; i < 9; i++) {
+                cells += '<td class="cell ' + board[i] + '" onclick="makeMove(' + i + ')">' + board[i] + '</td>';
+                if ((i + 1) % 3 == 0) cells += '</tr><tr>';
+            }
+            document.getElementById('board').innerHTML = '<tr>' + cells + '</tr>';
+            document.getElementById('score').textContent = 'Score: X - ' + score['X'] + ', O - ' + score['O'] + ', Tie - ' + score['tie'];
+            document.getElementById('message').textContent = '';
+            document.getElementById('winMessage').textContent = '';
+        }
+
+        function makeMove(i) {
+            if (board[i] == '') {
+                clearTimeout(timer);
+                board[i] = player;
+                var winner = checkWinner();
+                player = player == 'X' ? 'O' : 'X';
+                if (winner) {
+                    score[winner]++;
+                    if (winner == 'tie') {
+                        document.getElementById('message').textContent = 'It\'s a tie!';
+                    } else {
+                        if (score[winner] == 3) {
+                            document.getElementById('message').textContent = winner + ' is on a win streak!';
+                        } else if (score[winner] == 5) {
+                            document.getElementById('message').textContent = winner + ' is on a rampage!';
+                        } else {
+                            document.getElementById('message').textContent = winner + ' wins!';
+                        }
+                    }
+                    setTimeout(resetBoard, 2000);
+                    return;
+                }
+                drawBoard();
+                if (mode == 'solo' && player == 'O') {
+                    timer = setTimeout(makeComputerMove, 1000);
+                } else {
+                    startTimer();
+                }
+            }
+        }
+
+
+        function makeComputerMove() {
+            clearTimeout(timer);
+            if (difficulty == 'easy') {
+                var i = Math.floor(Math.random() * 9);
+                while (board[i] != '') {
+                    i = Math.floor(Math.random() * 9);
+                }
+                makeMove(i);
+            } else if (difficulty == 'medium') {
+                var bestScore = -Infinity;
+                var move;
+                for (var i = 0; i < 9; i++) {
+                    if (board[i] == '') {
+                        board[i] = 'O';
+                        var score = minimax(board, 0, false);
+                        board[i] = '';
+                        if (score > bestScore) {
+                            bestScore = score;
+                            move = i;
+                        }
+                    }
+                }
+                makeMove(move);
+            } else {
+                var bestScore = -Infinity;
+                var move;
+                for (var i = 0; i < 9; i++) {
+                    if (board[i] == '') {
+                        board[i] = 'O';
+                        var score = minimax(board, 0, false);
+                        board[i] = '';
+                        if (score > bestScore) {
+                            bestScore = score;
+                            move = i;
+                        }
+                    }
+                }
+                makeMove(move);
+            }
+        }
+
+        function minimax(board, depth, isMaximizing) {
+            if (difficulty == 'medium' && depth > 3) {
+                return 0;
+            }
+
+            var winner = checkWinner();
+            if (winner !== null) {
+                return winner == 'O' ? 1 : -1;
+            }
+
+            if (isMaximizing) {
+                var bestScore = -Infinity;
+                for (var i = 0; i < 9; i++) {
+                    if (board[i] == '') {
+                        board[i] = 'O';
+                        var score = minimax(board, depth + 1, false);
+                        board[i] = '';
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            } else {
+                var bestScore = Infinity;
+                for (var i = 0; i < 9; i++) {
+                    if (board[i] == '') {
+                        board[i] = 'X';
+                        var score = minimax(board, depth + 1, true);
+                        board[i] = '';
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+        function checkWinner() {
+            var lines = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+            for (var i = 0; i < lines.length; i++) {
+                var [a, b, c] = lines[i];
+                if (board[a] && board[a] == board[b] && board[a] == board[c]) {
+                    return board[a];
+                }
+            }
+            if (!board.includes('')) {
+                return 'tie';
+            }
+            return null;
+        }
+
+        function resetBoard() {
+            clearTimeout(timer);
+            board = ['','','','','','','','',''];
+            player = 'X';
+            drawBoard();
+            startTimer();
+        }
+
+        function resetScore() {
+            score = { 'X': 0, 'O': 0, 'tie': 0 };
+            drawBoard();
+        }
+
+        function startGame(m, d) {
+            mode = m;
+            difficulty = d || 'easy';
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('board').style.display = 'table';
+            document.getElementById('controls').style.display = 'block';
+            document.getElementById('timer').style.display = 'block';
+            resetBoard();
+        }
+
+        function showMenu() {
+            clearTimeout(timer);
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('board').style.display = 'none';
+            document.getElementById('controls').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+        }
+
+        function startTimer() {
+            var timeLeft = 60;
+            timer = setInterval(function() {
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('timer').textContent = 'Time up! You lose your turn.';
+                    player = player == 'X' ? 'O' : 'X';
+                } else {
+                    document.getElementById('timer').textContent = 'Time left: ' + timeLeft + ' seconds';
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
