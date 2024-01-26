@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .mine {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+            display: inline-block;
+            line-height: 20px;
+            text-align: center;
+        }
+        .revealed {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <div id="minesweeper"></div>
+
+    <script>
+        var minefield = [];
+        var size = 10;
+
+        for (var i = 0; i < size; i++) {
+            minefield[i] = [];
+            for (var j = 0; j < size; j++) {
+                minefield[i][j] = { mine: Math.random() < 0.2, revealed: false, count: 0 };
+            }
+        }
+
+        for (var i = 0; i < size; i++) {
+            for (var j = 0; j < size; j++) {
+                var mineCount = 0;
+                for (var di = -1; di <= 1; di++) {
+                    for (var dj = -1; dj <= 1; dj++) {
+                        var ni = i + di;
+                        var nj = j + dj;
+                        if (ni >= 0 && ni < size && nj >= 0 && nj < size && minefield[ni][nj].mine) {
+                            mineCount++;
+                        }
+                    }
+                }
+                minefield[i][j].count = mineCount;
+            }
+        }
+
+        var minesweeper = document.getElementById('minesweeper');
+
+        for (var i = 0; i < size; i++) {
+            for (var j = 0; j < size; j++) {
+                var cell = document.createElement('div');
+                cell.className = 'mine';
+                cell.addEventListener('click', (function(i, j) {
+                    return function() {
+                        if (minefield[i][j].mine) {
+                            alert('Game over!');
+                        } else {
+                            minefield[i][j].revealed = true;
+                            this.className += ' revealed';
+                            this.textContent = minefield[i][j].count > 0 ? minefield[i][j].count : '';
+                        }
+                    };
+                })(i, j));
+                minesweeper.appendChild(cell);
+            }
+            minesweeper.appendChild(document.createElement('br'));
+        }
+    </script>
+</body>
+</html>

@@ -8,14 +8,23 @@
             font-size: 2em;
             font-family: Arial, sans-serif;
         }
+        #timer {
+            color: red;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+        }
     </style>
 </head>
 <body>
     <div id="timer">10</div>
+    <button id="defuseButton">Defuse the bomb!</button>
 
     <script>
         var timeLeft = 10;
         var timer = document.getElementById('timer');
+        var defuseButton = document.getElementById('defuseButton');
 
         var countdown = setInterval(function() {
             timeLeft--;
@@ -24,8 +33,15 @@
             if (timeLeft <= 0) {
                 clearInterval(countdown);
                 timer.textContent = 'BOOM!';
+                defuseButton.disabled = true;
             }
         }, 1000);
+
+        defuseButton.addEventListener('click', function() {
+            clearInterval(countdown);
+            timer.textContent = 'Bomb defused!';
+            defuseButton.disabled = true;
+        });
     </script>
 </body>
 </html>
