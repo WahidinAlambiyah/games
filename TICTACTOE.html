@@ -116,9 +116,20 @@
                             document.getElementById('message').textContent = winner + ' is on a rampage!';
                         } else {
                             document.getElementById('message').textContent = winner + ' wins!';
+                            document.getElementById('board').style.display = 'none';
+                            document.getElementById('controls').style.display = 'none';
+                            document.getElementById('timer').style.display = 'none';
+                            document.getElementById('winMessage').style.display = 'block';
+                            document.getElementById('winMessage').textContent = winner + ' wins!';
+                            setTimeout(function() {
+                                document.getElementById('board').style.display = 'table';
+                                document.getElementById('controls').style.display = 'block';
+                                document.getElementById('timer').style.display = 'block';
+                                document.getElementById('winMessage').style.display = 'none';
+                                resetBoard();
+                            }, 5000);
                         }
                     }
-                    setTimeout(resetBoard, 2000);
                     return;
                 }
                 drawBoard();
@@ -262,7 +273,7 @@
         }
 
         function startTimer() {
-            var timeLeft = 60;
+            var timeLeft = 5;
             timer = setInterval(function() {
                 if (timeLeft <= 0) {
                     clearInterval(timer);
