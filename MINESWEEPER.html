@@ -21,9 +21,11 @@
     <script>
         var minefield = [];
         var size = 10;
+        var cells = [];
 
         for (var i = 0; i < size; i++) {
             minefield[i] = [];
+            cells[i] = [];
             for (var j = 0; j < size; j++) {
                 minefield[i][j] = { mine: Math.random() < 0.2, revealed: false, count: 0 };
             }
@@ -53,18 +55,37 @@
                 cell.className = 'mine';
                 cell.addEventListener('click', (function(i, j) {
                     return function() {
-                        if (minefield[i][j].mine) {
-                            alert('Game over!');
-                        } else {
-                            minefield[i][j].revealed = true;
-                            this.className += ' revealed';
-                            this.textContent = minefield[i][j].count > 0 ? minefield[i][j].count : '';
-                        }
+                        reveal(i, j);
                     };
                 })(i, j));
                 minesweeper.appendChild(cell);
+                cells[i][j] = cell;
             }
             minesweeper.appendChild(document.createElement('br'));
+        }
+
+        function reveal(i, j) {
+            if (minefield[i][j].revealed) {
+                return;
+            }
+            if (minefield[i][j].mine) {
+                alert('Game over!');
+                return;
+            }
+            minefield[i][j].revealed = true;
+            cells[i][j].className += ' revealed';
+            cells[i][j].textContent = minefield[i][j].count > 0 ? minefield[i][j].count : '';
+            if (minefield[i][j].count === 0) {
+                for (var di = -1; di <= 1; di++) {
+                    for (var dj = -1; dj <= 1; dj++) {
+                        var ni = i + di;
+                        var nj = j + dj;
+                        if (ni >= 0 && ni < size && nj >= 0 && nj < size) {
+                            reveal(ni, nj);
+                        }
+                    }
+                }
+            }
         }
     </script>
 </body>
