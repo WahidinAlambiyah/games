@@ -2,26 +2,129 @@
 <html>
 <head>
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .game-container {
+            text-align: center;
+        }
+        .logo {
+            font-size: 2em;
+            color: #333;
+        }
+        .powered-by {
+            font-size: 1em;
+            color: #666;
+        }
         .mine {
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             border: 1px solid black;
             display: inline-block;
-            line-height: 20px;
+            line-height: 30px;
             text-align: center;
+            vertical-align: top;
         }
         .revealed {
             background-color: lightgray;
         }
+        .bomb {
+            background-color: red;
+        }
+        .number-1 {
+            color: blue;
+        }
+        .number-2 {
+            color: green;
+        }
+        .number-3 {
+            color: red;
+        }
+        .number-4 {
+            color: purple;
+        }
+        .number-5 {
+            color: maroon;
+        }
+        .number-6 {
+            color: turquoise;
+        }
+        .number-7 {
+            color: black;
+        }
+        .number-8 {
+            color: gray;
+        }
+        #timer {
+            font-size: 1.5em;
+            color: red;
+            margin-bottom: 20px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 1em;
+        }
+        .clock {
+            border: 2px solid black;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+        }
     </style>
 </head>
 <body>
-    <div id="minesweeper"></div>
+    <div class="game-container">
+        <div class="logo">MINI MINESWEEPER</div>
+        <div class="powered-by">Powered by Bing</div>
+        <div class="clock">
+            <div id="timer">0</div>
+        </div>
+        <div id="minesweeper"></div>
+        <button id="hintButton" title="Reveal a bomb (adds 5 seconds to timer)">Hint (3 left)</button>
+        <button id="continueButton" title="Continue the game" disabled>Continue</button>
+        <button id="resetButton" title="Reset the game">Reset</button>
+    </div>
 
     <script>
         var minefield = [];
         var size = 10;
         var cells = [];
+        var timer = document.getElementById('timer');
+        var hintButton = document.getElementById('hintButton');
+        var continueButton = document.getElementById('continueButton');
+        var resetButton = document.getElementById('resetButton');
+        var time = 0;
+        var hints = 3;
+        var timerInterval;
+
+        function resetGame() {
+            for (var i = 0; i < size; i++) {
+                for (var j = 0; j < size; j++) {
+                    minefield[i][j] = { mine: Math.random() < 0.2, revealed: false, count: 0 };
+                    cells[i][j].className = 'mine';
+                    cells[i][j].textContent = '';
+                }
+            }
+            continueButton.disabled = true;
+            time = 0;
+            timer.textContent = time;
+            hints = 3;
+            hintButton.textContent = 'Hint (' + hints + ' left)';
+            timerInterval = setInterval(function() {
+                time++;
+                timer.textContent = time;
+            }, 1000);
+        }
 
         for (var i = 0; i < size; i++) {
             minefield[i] = [];
@@ -69,12 +172,24 @@
                 return;
             }
             if (minefield[i][j].mine) {
-                alert('Game over!');
+                for (var i = 0; i < size; i++) {
+                    for (var j = 0; j < size; j++) {
+                        if (minefield[i][j].mine) {
+                            cells[i][j].className += ' bomb';
+                            cells[i][j].textContent = '💣';
+                        }
+                    }
+                }
+                clearInterval(timerInterval);
+                continueButton.disabled = false;
                 return;
             }
             minefield[i][j].revealed = true;
             cells[i][j].className += ' revealed';
-            cells[i][j].textContent = minefield[i][j].count > 0 ? minefield[i][j].count : '';
+            if (minefield[i][j].count > 0) {
+                cells[i][j].textContent = minefield[i][j].count;
+                cells[i][j].className += ' number-' + minefield[i][j].count;
+            }
             if (minefield[i][j].count === 0) {
                 for (var di = -1; di <= 1; di++) {
                     for (var dj = -1; dj <= 1; dj++) {
@@ -87,6 +202,52 @@
                 }
             }
         }
+
+        hintButton.addEventListener('click', function() {
+            if (hints > 0) {
+                hints--;
+                hintButton.textContent = 'Hint (' + hints + ' left)';
+                time += 5;
+                timer.textContent = time;
+                for (var i = 0; i < size; i++) {
+                    for (var j = 0; j < size; j++) {
+                        if (!minefield[i][j].revealed && minefield[i][j].mine) {
+                            cells[i][j].className += ' bomb';
+                            cells[i][j].textContent = '💣';
+                            return;
+                        }
+                    }
+                }
+            }
+        });
+
+        continueButton.addEventListener('click', function() {
+            for (var i = 0; i < size; i++) {
+                for (var j = 0; j < size; j++) {
+                    if (minefield[i][j].mine) {
+                        cells[i][j].className = 'mine';
+                        cells[i][j].textContent = '';
+                    }
+                }
+            }
+            continueButton.disabled = true;
+            time = 0;
+            timer.textContent = time;
+            timerInterval = setInterval(function() {
+                time++;
+                timer.textContent = time;
+            }, 1000);
+        });
+
+        resetButton.addEventListener('click', function() {
+            clearInterval(timerInterval);
+            resetGame();
+        });
+
+        timerInterval = setInterval(function() {
+            time++;
+            timer.textContent = time;
+        }, 1000);
     </script>
 </body>
 </html>
