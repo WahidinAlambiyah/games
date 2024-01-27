@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <style>
         body {
             display: flex;
@@ -80,6 +82,9 @@
             align-items: center;
             margin: 20px auto;
         }
+        .difficulty {
+            margin: 20px auto;
+        }
     </style>
 </head>
 <body>
@@ -90,9 +95,15 @@
             <div id="timer">0</div>
         </div>
         <div id="minesweeper"></div>
-        <button id="hintButton" title="Reveal a bomb (adds 5 seconds to timer)">Hint (3 left)</button>
-        <button id="continueButton" title="Continue the game" disabled>Continue</button>
-        <button id="resetButton" title="Reset the game">Reset</button>
+        <button id="hintButton" title="Reveal a bomb (adds 5 seconds to timer)"><i class="fas fa-lightbulb"></i></button>
+        <button id="continueButton" title="Continue the game" disabled><i class="fas fa-play"></i></button>
+        <button id="resetButton" title="Reset the game"><i class="fas fa-redo"></i></button>
+        <div class="difficulty">
+            <button id="beginner" title="Beginner difficulty">Beginner</button>
+            <button id="intermediate" title="Intermediate difficulty">Intermediate</button>
+            <button id="hard" title="Hard difficulty">Hard</button>
+            <!-- <button id="unbelievable" title="Unbelievable difficulty">Unbelievable</button> -->
+        </div>
     </div>
 
     <script>
@@ -106,17 +117,19 @@
         var time = 0;
         var hints = 3;
         var timerInterval;
+        var currentDifficulty = {size: 10, mineProbability: 0.1}; // Store the current difficulty level
 
         function resetGame() {
             clearInterval(timerInterval);
             minesweeper.innerHTML = ''; // Clear the game board
             minefield = []; // Reset the minefield
             cells = []; // Reset the cells
+            size = currentDifficulty.size; // Set the size based on the current difficulty level
             for (var i = 0; i < size; i++) {
                 minefield[i] = [];
                 cells[i] = [];
                 for (var j = 0; j < size; j++) {
-                    minefield[i][j] = { mine: Math.random() < 0.2, revealed: false, count: 0 };
+                    minefield[i][j] = { mine: Math.random() < currentDifficulty.mineProbability, revealed: false, count: 0 }; // Set the mine probability based on the current difficulty level
                 }
             }
             // Recalculate the mine counts
@@ -161,8 +174,40 @@
             }, 1000);
         }
 
-resetButton.addEventListener('click', resetGame);
+        // The rest of your JavaScript code goes here
 
+        // Add event listeners to the difficulty buttons
+        document.getElementById('beginner').addEventListener('click', function() {
+            currentDifficulty = {size: 10, mineProbability: 0.1}; // Beginner: size 10, mine probability 0.1
+            resetGame();
+        });
+        document.getElementById('intermediate').addEventListener('click', function() {
+            currentDifficulty = {size: 15, mineProbability: 0.15}; // Intermediate: size 15, mine probability 0.15
+            resetGame();
+        });
+        document.getElementById('hard').addEventListener('click', function() {
+            currentDifficulty = {size: 20, mineProbability: 0.2}; // Hard: size 20, mine probability 0.2
+            resetGame();
+        });
+
+        /* document.getElementById('unbelievable').addEventListener('click', function() {
+            currentDifficulty = {size: 30, mineProbability: 0.3}; // Unbelievable: size 30, mine probability 0.3
+            resetGame();
+        });
+        */
+
+        // Add event listener to the reset button
+        resetButton.addEventListener('click', function() {
+            resetGame(); // Reset the game when the reset button is clicked
+        });
+        
+        for (var i = 0; i < size; i++) {
+            minefield[i] = [];
+            cells[i] = [];
+            for (var j = 0; j < size; j++) {
+                minefield[i][j] = { mine: Math.random() < 0.2, revealed: false, count: 0 }; // Change the mine probability based on difficulty level
+            }
+        }
 
         for (var i = 0; i < size; i++) {
             minefield[i] = [];
