@@ -108,12 +108,47 @@
         var timerInterval;
 
         function resetGame() {
+            clearInterval(timerInterval);
+            minesweeper.innerHTML = ''; // Clear the game board
+            minefield = []; // Reset the minefield
+            cells = []; // Reset the cells
             for (var i = 0; i < size; i++) {
+                minefield[i] = [];
+                cells[i] = [];
                 for (var j = 0; j < size; j++) {
                     minefield[i][j] = { mine: Math.random() < 0.2, revealed: false, count: 0 };
-                    cells[i][j].className = 'mine';
-                    cells[i][j].textContent = '';
                 }
+            }
+            // Recalculate the mine counts
+            for (var i = 0; i < size; i++) {
+                for (var j = 0; j < size; j++) {
+                    var mineCount = 0;
+                    for (var di = -1; di <= 1; di++) {
+                        for (var dj = -1; dj <= 1; dj++) {
+                            var ni = i + di;
+                            var nj = j + dj;
+                            if (ni >= 0 && ni < size && nj >= 0 && nj < size && minefield[ni][nj].mine) {
+                                mineCount++;
+                            }
+                        }
+                    }
+                    minefield[i][j].count = mineCount;
+                }
+            }
+            // Recreate the game board
+            for (var i = 0; i < size; i++) {
+                for (var j = 0; j < size; j++) {
+                    var cell = document.createElement('div');
+                    cell.className = 'mine';
+                    cell.addEventListener('click', (function(i, j) {
+                        return function() {
+                            reveal(i, j);
+                        };
+                    })(i, j));
+                    minesweeper.appendChild(cell);
+                    cells[i][j] = cell;
+                }
+                minesweeper.appendChild(document.createElement('br'));
             }
             continueButton.disabled = true;
             time = 0;
@@ -125,6 +160,9 @@
                 timer.textContent = time;
             }, 1000);
         }
+
+resetButton.addEventListener('click', resetGame);
+
 
         for (var i = 0; i < size; i++) {
             minefield[i] = [];
@@ -214,12 +252,14 @@
                         if (!minefield[i][j].revealed && minefield[i][j].mine) {
                             cells[i][j].className += ' bomb';
                             cells[i][j].textContent = '💣';
+                            minefield[i][j].revealed = true; // This line is added to mark the bomb as revealed
                             return;
                         }
                     }
                 }
             }
         });
+
 
         continueButton.addEventListener('click', function() {
             for (var i = 0; i < size; i++) {
