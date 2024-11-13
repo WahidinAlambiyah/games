@@ -71,6 +71,10 @@
   <input type="text" id="wheel-input" placeholder="Enter a value">
   <button type="button" onclick="addItem()">Add Item</button>
 </div>
+<div>
+  <input type="text" id="wheel-list-input" placeholder="Enter comma-separated values">
+  <button type="button" onclick="addList()">Add List</button>
+</div>
 <ul id="item-list"></ul>
 
 <fieldset class="ui-wheel-of-fortune">
@@ -79,7 +83,7 @@
 </fieldset>
 
 <script>
-  const defaultValues = ['$1000', '$2000', '$3000', '$4000', '$5000', '$6000'];
+  const defaultValues = ['Kiss on Lips 2 Min', 'Kiss 1 Min', 'Hug 1 Min'];
   let wheelValues = [...defaultValues];
 
   function loadDefaultValues() {
@@ -92,6 +96,17 @@
     const value = input.value.trim();
     if (value) {
       wheelValues.push(value);
+      input.value = '';
+      updateWheelList();
+      updateItemList();
+    }
+  }
+
+  function addList() {
+    const input = document.getElementById('wheel-list-input');
+    const values = input.value.split(',').map(item => item.trim()).filter(item => item);
+    if (values.length > 0) {
+      wheelValues.push(...values); // Add all items to the wheelValues array
       input.value = '';
       updateWheelList();
       updateItemList();
