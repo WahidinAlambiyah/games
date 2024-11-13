@@ -68,9 +68,10 @@
 <body>
 
 <div>
-  <input type="text" id="wheel-input" placeholder="Enter values separated by commas">
-  <button type="button" onclick="updateWheel()">Update Wheel</button>
+  <input type="text" id="wheel-input" placeholder="Enter a value">
+  <button type="button" onclick="addItem()">Add Item</button>
 </div>
+<ul id="item-list"></ul>
 
 <fieldset class="ui-wheel-of-fortune">
   <ul id="wheel-list"></ul>
@@ -78,23 +79,72 @@
 </fieldset>
 
 <script>
-  function updateWheel() {
-    const input = document.getElementById('wheel-input').value;
+  const defaultValues = ['$1000', '$2000', '$3000', '$4000', '$5000', '$6000'];
+  let wheelValues = [...defaultValues];
+
+  function loadDefaultValues() {
+    updateWheelList();
+    updateItemList();
+  }
+
+  function addItem() {
+    const input = document.getElementById('wheel-input');
+    const value = input.value.trim();
+    if (value) {
+      wheelValues.push(value);
+      input.value = '';
+      updateWheelList();
+      updateItemList();
+    }
+  }
+
+  function deleteItem(index) {
+    wheelValues.splice(index, 1);
+    updateWheelList();
+    updateItemList();
+  }
+
+  function editItem(index) {
+    const newValue = prompt("Edit item:", wheelValues[index]);
+    if (newValue) {
+      wheelValues[index] = newValue;
+      updateWheelList();
+      updateItemList();
+    }
+  }
+
+  function updateWheelList() {
     const wheelList = document.getElementById('wheel-list');
-    const values = input.split(',').map(value => value.trim()).filter(value => value);
-
-    // Clear existing items
     wheelList.innerHTML = '';
+    wheelList.style.setProperty('--_items', wheelValues.length);
 
-    // Update CSS variable for item count
-    wheelList.style.setProperty('--_items', values.length);
-
-    // Populate the wheel dynamically based on input values
-    values.forEach((value, index) => {
+    wheelValues.forEach((value, index) => {
       const li = document.createElement('li');
       li.textContent = value;
-      li.style.setProperty('--_idx', index + 1); // Dynamic index for rotation
+      li.style.setProperty('--_idx', index + 1);
       wheelList.appendChild(li);
+    });
+  }
+
+  function updateItemList() {
+    const itemList = document.getElementById('item-list');
+    itemList.innerHTML = '';
+
+    wheelValues.forEach((value, index) => {
+      const item = document.createElement('li');
+      item.textContent = value;
+
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.onclick = () => deleteItem(index);
+
+      const editButton = document.createElement('button');
+      editButton.textContent = 'Edit';
+      editButton.onclick = () => editItem(index);
+
+      item.appendChild(editButton);
+      item.appendChild(deleteButton);
+      itemList.appendChild(item);
     });
   }
 
@@ -109,7 +159,7 @@
 
     spin.addEventListener('click', () => {
       if (animation) {
-        animation.cancel(); // Reset the animation if it already exists
+        animation.cancel();
       }
 
       const randomAdditionalDegrees = Math.random() * 360 + 1800;
@@ -130,8 +180,10 @@
     });
   }
 
-  // Initialize the wheel interaction
-  wheelOfFortune('.ui-wheel-of-fortune');
+  document.addEventListener('DOMContentLoaded', () => {
+    loadDefaultValues();
+    wheelOfFortune('.ui-wheel-of-fortune');
+  });
 </script>
 
 </body>
