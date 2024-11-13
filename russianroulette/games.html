@@ -3,9 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Wheel of Fortune Game</title>
+  <title>Wheels of Pleasure</title>
   <style>
-    /* Existing styles for the wheel */
+    /* Header styling */
+    .header {
+      display: table;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: linear-gradient(45deg, #f39c12, #e67e22);
+      color: #fff;
+      border-radius: 12px;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 80%;
+      max-width: 600px;
+    }
+    .header h1 {
+      font-size: 2.5em;
+      margin: 0;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      font-family: 'Georgia', serif;
+    }
+    .header p {
+      font-size: 1em;
+      font-weight: 300;
+      color: #ffecd9;
+      margin-top: 8px;
+    }
+
     :where(.ui-wheel-of-fortune) {
       --_items: 12;
       all: unset;
@@ -26,16 +53,26 @@
         scale: 1.4;
       }
       & > * { position: absolute; }
+
       button {
         aspect-ratio: 1 / 1;
-        background: hsla(0, 0%, 100%, .8);
-        border: 0;
+        background-color: #f39c12;
+        color: #fff;
+        border: 2px solid #e67e22;
         border-radius: 50%;
         cursor: pointer;
         font-size: 5cqi;
+        font-weight: bold;
         place-self: center;
         width: 20cqi;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s, background-color 0.2s;
       }
+      button:hover {
+        background-color: #e67e22;
+        transform: scale(1.05);
+      }
+
       ul {
         all: unset;
         clip-path: inset(0 0 0 0 round 50%);
@@ -48,8 +85,19 @@
         aspect-ratio: 1 / calc(2 * tan(180deg / var(--_items)));
         background: hsl(calc(360deg / var(--_items) * calc(var(--_idx))), 100%, 75%);
         clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
-        display: grid;
-        font-size: 5cqi;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: calc(3.5cqi - var(--scale, 0px)); /* Smaller font size for readability */
+        text-align: center;
+        padding: 1ch;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        line-height: 1.2;
+        max-width: 50cqi;
+        width: 100%;
+        height: 100%;
+        flex-wrap: nowrap;
         grid-area: 1 / -1;
         padding-left: 1ch;
         rotate: calc(360deg / var(--_items) * calc(var(--_idx) - 1));
@@ -58,14 +106,101 @@
         width: 50cqi;
       }
     }
+
     * { box-sizing: border-box; }
     body {
       font-family: system-ui, sans-serif;
       padding: 5cqi;
     }
+
+    /* Enhanced input and button styling */
+    input[type="text"] {
+      width: 60%;
+      padding: 10px;
+      font-size: 1.2em;
+      border: 2px solid #f39c12;
+      border-radius: 8px;
+      margin: 10px 0;
+      transition: box-shadow 0.2s ease;
+    }
+    input[type="text"]:focus {
+      box-shadow: 0 0 10px rgba(243, 156, 18, 0.6);
+      outline: none;
+    }
+    button[type="button"] {
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-left: 5px;
+      transition: background-color 0.3s;
+    }
+    button[type="button"]:hover {
+      background-color: #e67e22;
+    }
+
+    /* Modal popup styling */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      width: 80%;
+      max-width: 400px;
+    }
+
+    .modal button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Styling for toggleable lists */
+    .toggleable-list {
+      background-color: #fff3e0;
+      border: 2px solid #f39c12;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .toggleable-list.hidden {
+      display: none;
+    }
+    .toggle-button {
+      cursor: pointer;
+      color: #e67e22;
+      font-weight: bold;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
+
+<!-- Header with Logo and Title -->
+<div class="header">
+  <h1>Wheels of Pleasure</h1>
+  <p>Spin for fun and surprises!</p>
+</div>
 
 <div>
   <input type="text" id="wheel-input" placeholder="Enter a value">
@@ -75,56 +210,110 @@
   <input type="text" id="wheel-list-input" placeholder="Enter comma-separated values">
   <button type="button" onclick="addList()">Add List</button>
 </div>
-<ul id="item-list"></ul>
+<button type="button" onclick="generatePrizes()">Generate Random Prizes</button>
+<ul id="item-list" class="toggleable-list"></ul>
+<button class="toggle-button" onclick="toggleVisibility('item-list')">Toggle Wheel Items</button>
 
 <fieldset class="ui-wheel-of-fortune">
   <ul id="wheel-list"></ul>
   <button type="button">SPIN</button>
 </fieldset>
 
-<script>
-  const defaultValues = ['Kiss on Lips 2 Min', 'Kiss 1 Min', 'Hug 1 Min', 'Kiss on Lips 2 Min', 'Kiss 1 Min', 'Hug 1 Min'];
-  let wheelValues = [...defaultValues];
+<!-- Modal Popup for showing the result -->
+<div id="result-modal" class="modal">
+  <div class="modal-content">
+    <p id="result-text">You won!</p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
 
-  function loadDefaultValues() {
-    updateWheelList();
-    updateItemList();
+<!-- Prize History Section -->
+<h3>Prize History</h3>
+<ul id="prize-history" class="toggleable-list"></ul>
+<button type="button" onclick="clearPrizeHistory()">Clear Prize History</button>
+<button class="toggle-button" onclick="toggleVisibility('prize-history')">Toggle Prize History</button>
+
+<script>
+  const defaultValues = ['$1000', '$2000', '$3000', '$4000', '$5000', '$6000'];
+  let wheelValues = loadWheelValues();
+  let prizeHistory = loadPrizeHistory();
+
+  const randomPrizes = [
+    '10 min back massage',
+    'Dinner date at favorite place',
+    'Movie night of choice',
+    'No chores for a day',
+    'Breakfast in bed',
+    'One free wish',
+    'Day off from cooking',
+    'Coffee date on me',
+    'Surprise gift',
+    'Outdoor picnic'
+  ];
+
+  function loadWheelValues() {
+    const savedValues = localStorage.getItem('wheelValues');
+    return savedValues ? JSON.parse(savedValues) : [...defaultValues];
+  }
+
+  function saveWheelValues() {
+    localStorage.setItem('wheelValues', JSON.stringify(wheelValues));
+  }
+
+  function loadPrizeHistory() {
+    const savedHistory = localStorage.getItem('prizeHistory');
+    return savedHistory ? JSON.parse(savedHistory) : [];
+  }
+
+  function savePrizeHistory() {
+    localStorage.setItem('prizeHistory', JSON.stringify(prizeHistory));
   }
 
   function addItem() {
     const input = document.getElementById('wheel-input');
     const value = input.value.trim();
-    if (value) {
+    if (value && !wheelValues.includes(value)) { 
       wheelValues.push(value);
+      saveWheelValues();
       input.value = '';
       updateWheelList();
       updateItemList();
+    } else {
+      alert("This value is already in the wheel or empty. Please add a unique value.");
     }
   }
 
   function addList() {
     const input = document.getElementById('wheel-list-input');
     const values = input.value.split(',').map(item => item.trim()).filter(item => item);
-    if (values.length > 0) {
-      wheelValues.push(...values); // Add all items to the wheelValues array
+    const uniqueValues = values.filter(value => !wheelValues.includes(value));
+    if (uniqueValues.length > 0) {
+      wheelValues.push(...uniqueValues);
+      saveWheelValues();
       input.value = '';
       updateWheelList();
       updateItemList();
+    } else {
+      alert("All values are duplicates or empty. Please add unique values.");
     }
   }
 
   function deleteItem(index) {
     wheelValues.splice(index, 1);
+    saveWheelValues();
     updateWheelList();
     updateItemList();
   }
 
   function editItem(index) {
     const newValue = prompt("Edit item:", wheelValues[index]);
-    if (newValue) {
+    if (newValue && !wheelValues.includes(newValue)) {
       wheelValues[index] = newValue;
+      saveWheelValues();
       updateWheelList();
       updateItemList();
+    } else {
+      alert("This value is already in the wheel or empty. Please enter a unique value.");
     }
   }
 
@@ -163,6 +352,33 @@
     });
   }
 
+  function updatePrizeHistory() {
+    const prizeHistoryList = document.getElementById('prize-history');
+    prizeHistoryList.innerHTML = '';
+
+    prizeHistory.forEach((prize, index) => {
+      const item = document.createElement('li');
+      item.textContent = prize;
+
+      const addButton = document.createElement('button');
+      addButton.textContent = 'Add to Wheel';
+      addButton.onclick = () => addPrizeBackToWheel(prize, index);
+      addButton.disabled = wheelValues.includes(prize); 
+
+      item.appendChild(addButton);
+      prizeHistoryList.appendChild(item);
+    });
+  }
+
+  function addPrizeBackToWheel(prize, index) {
+    if (!wheelValues.includes(prize)) { 
+      wheelValues.push(prize);
+      saveWheelValues();
+      updateWheelList();
+      updateItemList();
+    }
+  }
+
   function wheelOfFortune(selector) {
     const node = document.querySelector(selector);
     if (!node) return;
@@ -191,12 +407,60 @@
         iterations: 1
       });
 
+      animation.onfinish = () => {
+        const degrees = newEndDegree % 360;
+        const sliceAngle = 360 / wheelValues.length;
+        const winningIndex = Math.floor((360 - degrees) / sliceAngle) % wheelValues.length;
+        
+        const prize = wheelValues[winningIndex];
+        showModal(`You won: ${prize}!`);
+        
+        prizeHistory.push(prize);
+        savePrizeHistory();
+        
+        wheelValues.splice(winningIndex, 1);
+        saveWheelValues();
+        
+        updateWheelList();
+        updateItemList();
+        updatePrizeHistory();
+      };
+
       previousEndDegree = newEndDegree;
     });
   }
 
+  function showModal(message) {
+    document.getElementById('result-text').textContent = message;
+    document.getElementById('result-modal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('result-modal').style.display = 'none';
+  }
+
+  function toggleVisibility(elementId) {
+    const element = document.getElementById(elementId);
+    element.classList.toggle("hidden");
+  }
+
+  function clearPrizeHistory() {
+    prizeHistory = [];
+    savePrizeHistory();
+    updatePrizeHistory();
+  }
+
+  function generatePrizes() {
+    wheelValues = [...randomPrizes];
+    saveWheelValues();
+    updateWheelList();
+    updateItemList();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
-    loadDefaultValues();
+    updateWheelList();
+    updateItemList();
+    updatePrizeHistory();
     wheelOfFortune('.ui-wheel-of-fortune');
   });
 </script>
