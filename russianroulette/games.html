@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamic Wheel of Fortune Game</title>
   <style>
-    /* Existing styles here */
+    /* Existing styles for the wheel */
     :where(.ui-wheel-of-fortune) {
       --_items: 12;
       all: unset;
@@ -58,7 +58,6 @@
         width: 50cqi;
       }
     }
-    /* Additional styles for demo */
     * { box-sizing: border-box; }
     body {
       font-family: system-ui, sans-serif;
@@ -68,29 +67,36 @@
 </head>
 <body>
 
+<div>
+  <input type="text" id="wheel-input" placeholder="Enter values separated by commas">
+  <button type="button" onclick="updateWheel()">Update Wheel</button>
+</div>
+
 <fieldset class="ui-wheel-of-fortune">
   <ul id="wheel-list"></ul>
   <button type="button">SPIN</button>
 </fieldset>
 
 <script>
-  // Dynamic content array
-  const wheelValues = [
-    'Prize 1', 'Prize 2', 'Prize 3', 'Prize 4', 'Prize 5', 
-    'Prize 6', 'Prize 7', 'Prize 8', 'Prize 9', 'Prize 10', 
-    'Prize 11', 'Prize 12', 'Prize 13'
-  ];
+  function updateWheel() {
+    const input = document.getElementById('wheel-input').value;
+    const wheelList = document.getElementById('wheel-list');
+    const values = input.split(',').map(value => value.trim()).filter(value => value);
 
-  // Populate the wheel dynamically
-  const wheelList = document.getElementById('wheel-list');
-  wheelList.style.setProperty('--_items', wheelValues.length); // Set the number of items dynamically
+    // Clear existing items
+    wheelList.innerHTML = '';
 
-  wheelValues.forEach((value, index) => {
-    const li = document.createElement('li');
-    li.textContent = value;
-    li.style.setProperty('--_idx', index + 1); // Dynamic index for rotation
-    wheelList.appendChild(li);
-  });
+    // Update CSS variable for item count
+    wheelList.style.setProperty('--_items', values.length);
+
+    // Populate the wheel dynamically based on input values
+    values.forEach((value, index) => {
+      const li = document.createElement('li');
+      li.textContent = value;
+      li.style.setProperty('--_idx', index + 1); // Dynamic index for rotation
+      wheelList.appendChild(li);
+    });
+  }
 
   function wheelOfFortune(selector) {
     const node = document.querySelector(selector);
@@ -124,7 +130,7 @@
     });
   }
 
-  // Initialize the wheel
+  // Initialize the wheel interaction
   wheelOfFortune('.ui-wheel-of-fortune');
 </script>
 
