@@ -3,53 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Send Email with EmailJS</title>
-  <script type="text/javascript"
-        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>
-    // Initialize EmailJS with your Public Key
-    document.addEventListener("DOMContentLoaded", function() {
-      emailjs.init("D9CIwhsRCuYT3Uxz1"); // Replace with your actual Public Key
-    });
-
-    // Function to handle form submission
-    function sendEmail(event) {
-      event.preventDefault(); // Prevent the default form submission
-
-      // Collect form data
-      const templateParams = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        message: document.getElementById("message").value
-      };
-
-      // Use EmailJS to send the email
-      emailjs.send("service_rhiqhtm", "template_otp3gtq", templateParams)
-        .then(function(response) {
-          console.log("Email sent successfully!", response.status, response.text);
-          alert("Email sent successfully!");
-        }, function(error) {
-          console.error("Failed to send email:", error);
-          alert("Failed to send email. Please try again later.");
-        });
-    }
-  </script>
+  <title>Wheel of Fortune</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <h1>Contact Us</h1>
-  <form id="contactForm" onsubmit="sendEmail(event)">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
+<!-- Header with Logo and Title -->
+<div class="header">
+  <h1>Wheel of Fortune</h1>
+</div>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+<div class="game-container">
+  <!-- Wheel Section -->
+  <div class="wheel-section">
+    <div class="ui-wheel-of-fortune">
+      <div class="wheel-border">
+        <ul id="wheel-list" class="wheel-list"></ul>
+      </div>
+      <button class="spin-button">SPIN</button>
+    </div>
+  </div>
 
-    <label for="message">Message:</label>
-    <textarea id="message" name="message" required></textarea>
+  <!-- Controls Section -->
+  <div class="controls-section">
+    <input type="text" id="wheel-input" placeholder="Enter a value">
+    <button type="button" onclick="addItem()">Add Item</button>
+    <input type="text" id="wheel-list-input" placeholder="Enter comma-separated values">
+    <button type="button" onclick="addList()">Add List</button>
+    <button type="button" onclick="generatePrizes()">Generate Random Prizes</button>
+  </div>
 
-    <button type="submit">Send Email</button>
-  </form>
+  <!-- Lists Section -->
+  <div class="lists-section">
+    <div class="item-list-container">
+      <h3>Wheel Items</h3>
+      <ul id="item-list" class="toggleable-list"></ul>
+      <button class="toggle-button" onclick="toggleVisibility('item-list')">Toggle Wheel Items</button>
+    </div>
 
+    <div class="prize-history-container">
+      <h3>Prize History</h3>
+      <ul id="prize-history" class="toggleable-list"></ul>
+      <button type="button" onclick="clearPrizeHistory()">Clear Prize History</button>
+      <button class="toggle-button" onclick="toggleVisibility('prize-history')">Toggle Prize History</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Popup for showing the result -->
+<div id="result-modal" class="modal">
+  <div class="modal-content">
+    <p id="result-text">You won!</p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script src="scripts.js"></script>
 </body>
 </html>

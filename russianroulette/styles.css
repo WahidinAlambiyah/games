@@ -1,0 +1,147 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #f8b500, #e74c3c);
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+  
+  /* Game Container Layout */
+  .game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    max-width: 800px;
+  }
+  
+  /* Wheel Section Styling */
+  .wheel-section {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  .ui-wheel-of-fortune {
+    position: relative;
+  }
+  
+  .spin-button {
+    margin-top: 15px;
+    background-color: #3f51b5;
+    color: white;
+    font-size: 1.5em;
+    padding: 15px 30px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  .spin-button:hover {
+    background-color: #303f9f;
+  }
+  
+  /* Controls Section */
+  .controls-section {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  .controls-section input[type="text"] {
+    width: 180px;
+    padding: 10px;
+    font-size: 1em;
+    border: 2px solid #f39c12;
+    border-radius: 8px;
+  }
+  
+  .controls-section button {
+    background-color: #e67e22;
+    color: #fff;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .controls-section button:hover {
+    background-color: #d35400;
+  }
+  
+  /* Lists Section Styling */
+  .lists-section {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+  .item-list-container,
+  .prize-history-container {
+    width: 100%;
+    max-width: 300px;
+    background-color: #fff;
+    border: 2px solid #f39c12;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .toggleable-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+  
+  .toggleable-list li {
+    margin: 5px 0;
+    padding: 8px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .toggleable-list li button {
+    background: #d35400;
+    color: #fff;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Modal Popup Styling */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
