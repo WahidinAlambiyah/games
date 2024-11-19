@@ -3,19 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Browser Game</title>
+    <title>Wheel of Fortune</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.10.5/brython.min.js"></script>
     <style>
         canvas {
-            border: 1px solid black;
+            border: 2px solid black;
             display: block;
             margin: 20px auto;
+        }
+        button, input {
+            margin: 5px;
+        }
+        .controls {
+            text-align: center;
+        }
+        #history {
+            margin: 20px auto;
+            max-width: 400px;
+            padding: 10px;
+            border: 1px solid black;
+        }
+        .prize-controls {
+            display: inline-block;
+            margin-left: 5px;
         }
     </style>
 </head>
 <body onload="brython()">
-    <h1 style="text-align: center;">Python Game in the Browser</h1>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <h1 style="text-align: center;">Wheel of Fortune</h1>
+    <canvas id="wheelCanvas" width="600" height="600"></canvas>
+    <div class="controls">
+        <input type="text" id="prizeInput" placeholder="Enter prize">
+        <button id="addPrize">Add Prize</button>
+        <ul id="prizeList"></ul>
+    </div>
+    <button id="spinButton" style="display: block; margin: 10px auto;">Spin the Wheel!</button>
+    <h2 style="text-align: center;" id="result"></h2>
+    <div id="history">
+        <h3>Prize History:</h3>
+        <ul id="historyList"></ul>
+    </div>
     <script type="text/python" src="game.py"></script>
 </body>
 </html>
