@@ -1,14 +1,12 @@
-from browser import document, html, window
+from browser import document, window
 
-# Set up the canvas
 canvas = document["gameCanvas"]
 ctx = canvas.getContext("2d")
 
-# Game variables
 player = {"x": 375, "y": 500, "width": 50, "height": 50, "speed": 5}
 keys = set()
 
-# Handle keyboard events
+# Handle key press events
 def key_down(event):
     keys.add(event.key)
 
@@ -18,11 +16,11 @@ def key_up(event):
 document.bind("keydown", key_down)
 document.bind("keyup", key_up)
 
-# Game loop
-def game_loop():
+# Main game loop
+def game_loop(timestamp):
     ctx.clearRect(0, 0, canvas.width, canvas.height)  # Clear canvas
 
-    # Player movement
+    # Handle player movement
     if "ArrowLeft" in keys and player["x"] > 0:
         player["x"] -= player["speed"]
     if "ArrowRight" in keys and player["x"] < canvas.width - player["width"]:
@@ -32,12 +30,12 @@ def game_loop():
     if "ArrowDown" in keys and player["y"] < canvas.height - player["height"]:
         player["y"] += player["speed"]
 
-    # Draw player
+    # Draw the player
     ctx.fillStyle = "red"
     ctx.fillRect(player["x"], player["y"], player["width"], player["height"])
 
-    # Loop the game
+    # Call the next frame
     window.requestAnimationFrame(game_loop)
 
 # Start the game loop
-game_loop()
+window.requestAnimationFrame(game_loop)
