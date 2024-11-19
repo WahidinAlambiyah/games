@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Browser Game</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.10.5/brython.min.js"></script>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body onload="brython()">
+    <h1 style="text-align: center;">Python Game in the Browser</h1>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script type="text/python" src="game.py"></script>
+</body>
+</html>
